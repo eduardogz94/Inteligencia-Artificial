@@ -4,19 +4,14 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JButton;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 import java.util.Random;
-import java.util.Scanner;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import java.awt.Color;
-import javax.swing.JPanel;
-import java.awt.SystemColor;
 import javax.swing.JTextField;
 
-public class IntGUI {
+public class GuiOr {
 
 	private JFrame frame;
 	private JTextField textX1;
@@ -30,7 +25,12 @@ public class IntGUI {
 	private JTextField X1_prueba;
 	private JTextField X2_prueba;
 	
-	int[][] tv = { { 1, 1, 1},
+	int[][] and = { { 1, 1, 1},
+			   { 1,-1, 1},
+			   {-1, 1, 1},
+			   {-1,-1,-1} };
+	
+	int[][] or = { { 1, 1, 1},
 			   { 1,-1, 1},
 			   {-1, 1, 1},
 			   {-1,-1,-1} };
@@ -52,7 +52,7 @@ public class IntGUI {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					IntGUI window = new IntGUI();
+					GuiOr window = new GuiOr();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -64,7 +64,7 @@ public class IntGUI {
 	/**
 	 * Create the application.
 	 */
-	public IntGUI() {
+	public GuiOr() {
 		
 		initialize();
 	}
@@ -74,7 +74,7 @@ public class IntGUI {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setTitle("NEURONA OR");
+		frame.setTitle("NEURONA");
 		frame.getContentPane().setBackground(new Color(128, 128, 128));
 		frame.getContentPane().setForeground(new Color(0, 0, 0));
 		frame.setBounds(100, 100, 450, 300);
@@ -88,27 +88,28 @@ public class IntGUI {
 				textW2.setText(Double.toString(w2));
 				textUmbral.setText(Double.toString(umbral));
 				int i = 0;
-				while(i<tv.length) {
-					wx = (tv[i][0] * w1) + (tv[i][1] * w2) - umbral;
+				while(i<or.length) {
+					wx = (or[i][0] * w1) + (or[i][1] * w2) - umbral;
 					y = (wx>umbral) ? 1 : -1;
-					x1 = tv[i][0];
-					x2 = tv[i][1];
-					valor_esperado = tv[i][2];
-					y = y;
+					x1 = or[i][0];
+					x2 = or[i][1];
+					valor_esperado = or[i][2];
 					X1_prueba.setText(Double.toString(x1));
 					X2_prueba.setText(Double.toString(x2));
 					textY1.setText(Double.toString(y));
 					textY2.setText(Double.toString(valor_esperado));
-					if (y == tv[i][2]) {
+					if (y == or[i][2]) {
 						i++;
 					} else {
-						error = tv[i][2] - wx;
-						w1 = w1 + error * tv[i][0];
-						w2 = w2 + error * tv[i][1];
+						error = or[i][2] - wx;
+						w1 = w1 + error * or[i][0];
+						w2 = w2 + error * or[i][1];
 						umbral = umbral + error * (-1);
 						i = 0;
 					}
 				}	
+				
+				
 				
 				JButton Test = new JButton("PROBAR");
 				Test.addActionListener(new ActionListener() {
@@ -124,10 +125,11 @@ public class IntGUI {
 				frame.getContentPane().add(Test);
 			}
 		});
+		
+		
 		Learn.setBounds(33, 216, 125, 23);
 		frame.getContentPane().add(Learn);
-		
-		
+				
 		textX1 = new JTextField();
 		textX1.setBounds(284, 68, 48, 20);
 		frame.getContentPane().add(textX1);
