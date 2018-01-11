@@ -11,7 +11,7 @@ import javax.swing.JLabel;
 import java.awt.Color;
 import javax.swing.JTextField;
 
-public class GuiOr {
+public class GuiAnd {
 
 	private JFrame frame;
 	private JTextField textX1;
@@ -33,12 +33,12 @@ public class GuiOr {
 	double x1;
 	double x2;
 	double valor_esperado;
-
-	int[][] or = { { 1, 1, 1},
-			   { 1,-1, 1},
-			   {-1, 1, 1},
+	
+	int[][] and = { { 1, 1, 1},
+			   { 1,-1, -1},
+			   {-1, 1, -1},
 			   {-1,-1,-1} };
-
+	
 	/**
 	 * Launch the application.
 	 */
@@ -46,7 +46,7 @@ public class GuiOr {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					GuiOr window = new GuiOr();
+					GuiAnd window = new GuiAnd();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -58,8 +58,7 @@ public class GuiOr {
 	/**
 	 * Create the application.
 	 */
-	public GuiOr() {
-		
+	public GuiAnd() {
 		initialize();
 	}
 
@@ -82,28 +81,26 @@ public class GuiOr {
 				textW2.setText(Double.toString(w2));
 				textUmbral.setText(Double.toString(umbral));
 				int i = 0;
-				while(i<or.length) {
-					wx = (or[i][0] * w1) + (or[i][1] * w2) - umbral;
+				while(i<and.length) {
+					wx = (and[i][0] * w1) + (and[i][1] * w2) - umbral;
 					y = (wx>umbral) ? 1 : -1;
-					x1 = or[i][0];
-					x2 = or[i][1];
-					valor_esperado = or[i][2];
+					x1 = and[i][0];
+					x2 = and[i][1];
+					valor_esperado = and[i][2];
 					X1_prueba.setText(Double.toString(x1));
 					X2_prueba.setText(Double.toString(x2));
 					textY1.setText(Double.toString(y));
 					textY2.setText(Double.toString(valor_esperado));
-					if (y == or[i][2]) {
+					if (y == and[i][2]) {
 						i++;
 					} else {
-						error = or[i][2] - wx;
-						w1 = w1 + error * or[i][0];
-						w2 = w2 + error * or[i][1];
+						error = and[i][2] - wx;
+						w1 = w1 + error * and[i][0];
+						w2 = w2 + error * and[i][1];
 						umbral = umbral + error * (-1);
 						i = 0;
 					}
 				}	
-				
-				
 				
 				JButton Test = new JButton("PROBAR");
 				Test.addActionListener(new ActionListener() {
