@@ -39,6 +39,10 @@ public class GuiOr {
 			   {-1, 1, 1},
 			   {-1,-1,-1} };
 
+	int[][] and = { { 1, 1, 1},
+			   { 1,-1, -1},
+			   {-1, 1, -1},
+			   {-1,-1,-1} };
 	/**
 	 * Launch the application.
 	 */
@@ -75,8 +79,8 @@ public class GuiOr {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
-		JButton Learn = new JButton("ENTRENAR");
-		Learn.addActionListener(new ActionListener() {
+		JButton Or = new JButton("ENTRENAR OR");
+		Or.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				textW1.setText(Double.toString(w1));
 				textW2.setText(Double.toString(w2));
@@ -120,10 +124,58 @@ public class GuiOr {
 			}
 		});
 		
-		
-		Learn.setBounds(33, 216, 125, 23);
-		frame.getContentPane().add(Learn);
+		JButton And = new JButton("ENTRENAR AND");
+		And.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textW1.setText(Double.toString(w1));
+				textW2.setText(Double.toString(w2));
+				textUmbral.setText(Double.toString(umbral));
+				int i = 0;
+				while(i<and.length) {
+					wx = (and[i][0] * w1) + (and[i][1] * w2) - umbral;
+					y = (wx>umbral) ? 1 : -1;
+					x1 = and[i][0];
+					x2 = and[i][1];
+					valor_esperado = and[i][2];
+					X1_prueba.setText(Double.toString(x1));
+					X2_prueba.setText(Double.toString(x2));
+					textY1.setText(Double.toString(y));
+					textY2.setText(Double.toString(valor_esperado));
+					if (y == and[i][2]) {
+						i++;
+					} else {
+						error = and[i][2] - wx;
+						w1 = w1 + error * and[i][0];
+						w2 = w2 + error * and[i][1];
+						umbral = umbral + error * (-1);
+						i = 0;
+					}
+				}	
 				
+				
+				
+				JButton Test = new JButton("PROBAR");
+				Test.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						x1 = Double.parseDouble(textX1.getText());
+						x2 = Double.parseDouble(textX2.getText());
+						y = (x1 * w1) + (x2 * w2) - umbral;
+						y = (y >= umbral) ? 1 : -1;
+						Resultado.setText(Double.toString(y));
+					}
+				});
+				Test.setBounds(287, 152, 89, 23);
+				frame.getContentPane().add(Test);
+			}
+		});
+		
+		
+		Or.setBounds(33, 216, 125, 23);
+		frame.getContentPane().add(Or);
+	
+		And.setBounds(200, 216, 125, 23);
+		frame.getContentPane().add(And);
+		
 		textX1 = new JTextField();
 		textX1.setBounds(284, 68, 48, 20);
 		frame.getContentPane().add(textX1);
