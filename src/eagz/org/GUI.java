@@ -1,30 +1,57 @@
 package eagz.org;
 
 import java.awt.EventQueue;
+
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JTextField;
-import javax.swing.JLabel;
 import javax.swing.JButton;
-import javax.swing.JTextPane;
 import java.awt.event.ActionListener;
+import java.util.Random;
 import java.awt.event.ActionEvent;
+import javax.swing.JLabel;
+import java.awt.Color;
+import javax.swing.JTextField;
 
-@SuppressWarnings("serial")
-public class GUI extends JFrame {
+public class Gui {
 
-	private JPanel contentPane;
-	private JTextField textField;
-	private JTextField textField_1;
+	private JFrame frame;
+	private JTextField textX1;
+	private JTextField textX2;
+	private JTextField textY1;
+	private JTextField textY2;
+	private JTextField textW1;
+	private JTextField textW2;
+	private JTextField textUmbral;
+	private JTextField Resultado;
+	private JTextField X1_prueba;
+	private JTextField X2_prueba;
+	double w1 = new Random().nextDouble();
+	double w2 = new Random().nextDouble();
+	double umbral = 0.7;
+	double y = 0;
+	double wx = 0;
+	double error = 0;
+	double x1;
+	double x2;
+	double valor_esperado;
 
+	int[][] or = { { 1, 1, 1},
+			   { 1,-1, 1},
+			   {-1, 1, 1},
+			   {-1,-1,-1} };
 
+	int[][] and = { { 1, 1, 1},
+			   { 1,-1, -1},
+			   {-1, 1, -1},
+			   {-1,-1,-1} };
+	/**
+	 * Launch the application.
+	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					GUI frame = new GUI();
-					frame.setVisible(true);
+					Gui window = new Gui();
+					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -32,90 +59,207 @@ public class GUI extends JFrame {
 		});
 	}
 
+	/**
+	 * Create the application.
+	 */
+	public Gui() {
+		
+		initialize();
+	}
 
-	public GUI() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 600, 410);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frame = new JFrame();
+		frame.setTitle("NEURONA");
+		frame.getContentPane().setBackground(new Color(128, 128, 128));
+		frame.getContentPane().setForeground(new Color(0, 0, 0));
+		frame.setBounds(100, 100, 450, 300);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(null);
 		
-		textField = new JTextField();
-		textField.setBounds(455, 60, 64, 39);
-		contentPane.add(textField);
-		textField.setColumns(10);
-		
-		textField_1 = new JTextField();
-		textField_1.setBounds(349, 60, 64, 39);
-		contentPane.add(textField_1);
-		textField_1.setColumns(10);
-		
-		JLabel lblNewLabel = new JLabel("X2");
-		lblNewLabel.setBounds(461, 35, 46, 14);
-		contentPane.add(lblNewLabel);
-		
-		JLabel lblNewLabel_1 = new JLabel("X1");
-		lblNewLabel_1.setBounds(353, 35, 46, 14);
-		contentPane.add(lblNewLabel_1);
-		
-		JButton btnNewButton = new JButton("salir");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				System.exit(0);
+		JButton Or = new JButton("ENTRENAR OR");
+		Or.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textW1.setText(Double.toString(w1));
+				textW2.setText(Double.toString(w2));
+				textUmbral.setText(Double.toString(umbral));
+				int i = 0;
+				while(i<or.length) {
+					wx = (or[i][0] * w1) + (or[i][1] * w2) - umbral;
+					y = (wx>umbral) ? 1 : -1;
+					x1 = or[i][0];
+					x2 = or[i][1];
+					valor_esperado = or[i][2];
+					X1_prueba.setText(Double.toString(x1));
+					X2_prueba.setText(Double.toString(x2));
+					textY1.setText(Double.toString(y));
+					textY2.setText(Double.toString(valor_esperado));
+					if (y == or[i][2]) {
+						i++;
+					} else {
+						error = or[i][2] - wx;
+						w1 = w1 + error * or[i][0];
+						w2 = w2 + error * or[i][1];
+						umbral = umbral + error * (-1);
+						i = 0;
+					}
+				}	
+				
+				
+				
+				JButton Test = new JButton("PROBAR");
+				Test.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						x1 = Double.parseDouble(textX1.getText());
+						x2 = Double.parseDouble(textX2.getText());
+						y = (x1 * w1) + (x2 * w2) - umbral;
+						y = (y >= umbral) ? 1 : -1;
+						Resultado.setText(Double.toString(y));
+					}
+				});
+				Test.setBounds(287, 152, 89, 23);
+				frame.getContentPane().add(Test);
 			}
 		});
 		
-		btnNewButton.setBounds(485, 324, 89, 23);
-		contentPane.add(btnNewButton);
+		JButton And = new JButton("ENTRENAR AND");
+		And.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textW1.setText(Double.toString(w1));
+				textW2.setText(Double.toString(w2));
+				textUmbral.setText(Double.toString(umbral));
+				int i = 0;
+				while(i<and.length) {
+					wx = (and[i][0] * w1) + (and[i][1] * w2) - umbral;
+					y = (wx>umbral) ? 1 : -1;
+					x1 = and[i][0];
+					x2 = and[i][1];
+					valor_esperado = and[i][2];
+					X1_prueba.setText(Double.toString(x1));
+					X2_prueba.setText(Double.toString(x2));
+					textY1.setText(Double.toString(y));
+					textY2.setText(Double.toString(valor_esperado));
+					if (y == and[i][2]) {
+						i++;
+					} else {
+						error = and[i][2] - wx;
+						w1 = w1 + error * and[i][0];
+						w2 = w2 + error * and[i][1];
+						umbral = umbral + error * (-1);
+						i = 0;
+					}
+				}	
+				
+				
+				
+				JButton Test = new JButton("PROBAR");
+				Test.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						x1 = Double.parseDouble(textX1.getText());
+						x2 = Double.parseDouble(textX2.getText());
+						y = (x1 * w1) + (x2 * w2) - umbral;
+						y = (y >= umbral) ? 1 : -1;
+						Resultado.setText(Double.toString(y));
+					}
+				});
+				Test.setBounds(287, 152, 89, 23);
+				frame.getContentPane().add(Test);
+			}
+		});
 		
-		JButton btnNewButton_1 = new JButton("Entrenar");
-		btnNewButton_1.setBounds(399, 251, 89, 23);
-		contentPane.add(btnNewButton_1);
 		
-		JTextPane txtpnHola = new JTextPane();
-		txtpnHola.setText("X1");
-		txtpnHola.setBounds(35, 60, 116, 78);
-		contentPane.add(txtpnHola);
+		Or.setBounds(33, 216, 125, 23);
+		frame.getContentPane().add(Or);
+	
+		And.setBounds(200, 216, 125, 23);
+		frame.getContentPane().add(And);
 		
-		JTextPane txtpnX = new JTextPane();
-		txtpnX.setText("X2");
-		txtpnX.setBounds(178, 60, 116, 78);
-		contentPane.add(txtpnX);
+		textX1 = new JTextField();
+		textX1.setBounds(284, 68, 48, 20);
+		frame.getContentPane().add(textX1);
+		textX1.setColumns(10);
 		
-		JTextPane txtpnY_1 = new JTextPane();
-		txtpnY_1.setText("Y1");
-		txtpnY_1.setBounds(35, 175, 116, 78);
-		contentPane.add(txtpnY_1);
+		JLabel X1 = new JLabel("X1:");
+		X1.setBounds(299, 43, 26, 14);
+		frame.getContentPane().add(X1);
 		
-		JTextPane txtpnY = new JTextPane();
-		txtpnY.setText("Y2");
-		txtpnY.setBounds(178, 175, 116, 78);
-		contentPane.add(txtpnY);
+		JLabel X2 = new JLabel("X2:");
+		X2.setBounds(356, 43, 34, 14);
+		frame.getContentPane().add(X2);
 		
-		JTextPane txtpnRespuesta = new JTextPane();
-		txtpnRespuesta.setText("Respuesta");
-		txtpnRespuesta.setBounds(380, 125, 116, 78);
-		contentPane.add(txtpnRespuesta);
+		JLabel Y1 = new JLabel("Y:");
+		Y1.setBounds(80, 97, 34, 14);
+		frame.getContentPane().add(Y1);
 		
-		JLabel lblNewLabel_2 = new JLabel("Test");
-		lblNewLabel_2.setBounds(402, 11, 46, 14);
-		contentPane.add(lblNewLabel_2);
+		JLabel Y2 = new JLabel("VALOR ESPERADO:");
+		Y2.setBounds(104, 97, 149, 14);
+		frame.getContentPane().add(Y2);
 		
-		JLabel lblAprender = new JLabel("Aprender");
-		lblAprender.setBounds(138, 11, 89, 14);
-		contentPane.add(lblAprender);
+		textX2 = new JTextField();
+		textX2.setColumns(10);
+		textX2.setBounds(342, 68, 48, 20);
+		frame.getContentPane().add(textX2);
 		
-		JLabel lblNewLabel_3 = new JLabel("Pesos:");
-		lblNewLabel_3.setBounds(35, 290, 46, 14);
-		contentPane.add(lblNewLabel_3);
+		textY1 = new JTextField();
+		textY1.setColumns(10);
+		textY1.setBounds(64, 122, 44, 20);
+		frame.getContentPane().add(textY1);
 		
-		JTextPane textPane = new JTextPane();
-		textPane.setBounds(91, 290, 46, 23);
-		contentPane.add(textPane);
+		textY2 = new JTextField();
+		textY2.setColumns(10);
+		textY2.setBounds(118, 122, 52, 20);
+		frame.getContentPane().add(textY2);
 		
-		JTextPane textPane_1 = new JTextPane();
-		textPane_1.setBounds(153, 290, 46, 23);
-		contentPane.add(textPane_1);
+		JLabel Pesos = new JLabel("PESOS:");
+		Pesos.setBounds(10, 174, 44, 14);
+		frame.getContentPane().add(Pesos);
+		
+		textW1 = new JTextField();
+		textW1.setColumns(10);
+		textW1.setBounds(56, 153, 149, 20);
+		frame.getContentPane().add(textW1);
+		
+		textW2 = new JTextField();
+		textW2.setColumns(10);
+		textW2.setBounds(56, 185, 149, 20);
+		frame.getContentPane().add(textW2);
+		
+		textUmbral = new JTextField();
+		textUmbral.setColumns(10);
+		textUmbral.setBounds(10, 123, 44, 20);
+		frame.getContentPane().add(textUmbral);
+		
+		JLabel Umbral = new JLabel("UMBRAL:");
+		Umbral.setBounds(10, 97, 54, 14);
+		frame.getContentPane().add(Umbral);
+		
+		JLabel lblResultado = new JLabel("RESULTADO:");
+		lblResultado.setBounds(221, 114, 91, 14);
+		frame.getContentPane().add(lblResultado);
+		
+		Resultado = new JTextField();
+		Resultado.setColumns(10);
+		Resultado.setBounds(310, 111, 80, 20);
+		frame.getContentPane().add(Resultado);
+		
+		JLabel x1_prueba = new JLabel("X1:");
+		x1_prueba.setBounds(20, 29, 34, 14);
+		frame.getContentPane().add(x1_prueba);
+		
+		JLabel x2_prueba = new JLabel("X2:");
+		x2_prueba.setBounds(102, 29, 34, 14);
+		frame.getContentPane().add(x2_prueba);
+		
+		X1_prueba = new JTextField();
+		X1_prueba.setColumns(10);
+		X1_prueba.setBounds(10, 54, 44, 20);
+		frame.getContentPane().add(X1_prueba);
+		
+		X2_prueba = new JTextField();
+		X2_prueba.setColumns(10);
+		X2_prueba.setBounds(90, 54, 52, 20);
+		frame.getContentPane().add(X2_prueba);
 	}
 }
